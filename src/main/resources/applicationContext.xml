@@ -1,0 +1,16 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Bean definition for JoueurUI -->
+    <bean id="joueurUI" class="View.JoueurUI">
+        <property name="joueurService" ref="joueurService" />
+    </bean>
+
+    <!-- Bean definition for JoueurService -->
+    <bean id="joueurService" class="Service.implementation.JoueurServiceImpl" />
+
+    <!-- Bean definition for JoueurDAO -->
+    <bean id="joueurDao" class="DAO.implementation.JoueurImpl" />
+</beans>
