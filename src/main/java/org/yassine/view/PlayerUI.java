@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PlayerUI {
-    private final Scanner scanner = new Scanner(System.in);
+    private static final Logger logger = LoggerFactory.getLogger(PlayerUI.class);
     private IPlayerService playerService;
+    Scanner scanner = new Scanner(System.in);
 
     public void setPlayerService(IPlayerService playerService) {
         this.playerService = playerService;
@@ -19,14 +23,14 @@ public class PlayerUI {
     public void showMenu() {
         int choice;
         do {
-            System.out.println("\n=== Menu de Gestion des Players ===");
-            System.out.println("1. Créer un joueur");
-            System.out.println("2. Modifier un joueur");
-            System.out.println("3. Supprimer un joueur");
-            System.out.println("4. Afficher un joueur");
-            System.out.println("5. Afficher tous les joueurs");
-            System.out.println("6. Quitter");
-            System.out.print("Veuillez choisir une option : ");
+            logger.info("\n=== Menu de Gestion des Players ===");
+            logger.info("1. Créer un joueur");
+            logger.info("2. Modifier un joueur");
+            logger.info("3. Supprimer un joueur");
+            logger.info("4. Afficher un joueur");
+            logger.info("5. Afficher tous les joueurs");
+            logger.info("6. Quitter");
+            logger.info("Veuillez choisir une option : ");
 
             choice = Integer.parseInt(scanner.nextLine());
 
@@ -47,19 +51,19 @@ public class PlayerUI {
                     displayAllPlayers();
                     break;
                 case 6:
-                    System.out.println("Au revoir!");
+                    logger.info("Au revoir!");
                     break;
                 default:
-                    System.out.println("Choix non valide.");
+                    logger.info("Choix non valide.");
             }
         } while (choice != 6);
     }
 
     private void createPlayer() {
-        System.out.println("\n=== Créer un Player ===");
-        System.out.print("Entrez le pseudo du joueur : ");
+        logger.info("\n=== Créer un Player ===");
+        logger.info("Entrez le pseudo du joueur : ");
         String pseudo = scanner.nextLine();
-        System.out.print("Entrez l'âge du joueur : ");
+        logger.info("Entrez l'âge du joueur : ");
         int age = Integer.parseInt(scanner.nextLine());
 
         Player player = new Player();
@@ -67,61 +71,61 @@ public class PlayerUI {
         player.setAge(age);
 
         playerService.createPlayer(player);
-        System.out.println("Player créé avec succès !");
+        logger.info("Player créé avec succès !");
     }
 
     private void updatePlayer() {
-        System.out.println("\n=== Modifier un Player ===");
-        System.out.print("Entrez l'ID du joueur à modifier : ");
+        logger.info("\n=== Modifier un Player ===");
+        logger.info("Entrez l'ID du joueur à modifier : ");
         int id = Integer.parseInt(scanner.nextLine());
 
         Optional<Player> playerOpt = Optional.ofNullable(playerService.getPlayer(id));
         if (playerOpt.isPresent()) {
             Player player = playerOpt.get();
-            System.out.print("Nouveau pseudo : ");
+            logger.info("Nouveau pseudo : ");
             player.setPseudo(scanner.nextLine());
-            System.out.print("Nouvel âge : ");
+            logger.info("Nouvel âge : ");
             player.setAge(Integer.parseInt(scanner.nextLine()));
 
             playerService.updatePlayer(player);
-            System.out.println("Joueur modifié avec succès !");
+            logger.info("Joueur modifié avec succès !");
         } else {
-            System.out.println("Player introuvable.");
+            logger.info("Player introuvable.");
         }
     }
 
     private void deletePlayer() {
-        System.out.println("\n=== Supprimer un Player ===");
-        System.out.print("Entrez l'ID du joueur à supprimer : ");
+        logger.info("\n=== Supprimer un Player ===");
+        logger.info("Entrez l'ID du joueur à supprimer : ");
         int id = Integer.parseInt(scanner.nextLine());
 
         if (playerService.deletePlayer(id)) {
-            System.out.println("Joueur supprimé avec succès !");
+            logger.info("Joueur supprimé avec succès !");
         } else {
-            System.out.println("Erreur lors de la suppression du joueur.");
+            logger.info("Erreur lors de la suppression du joueur.");
         }
     }
 
     private void displayPlayer() {
-        System.out.println("\n=== Afficher un Player ===");
-        System.out.print("Entrez l'ID du joueur : ");
+        logger.info("\n=== Afficher un Player ===");
+        logger.info("Entrez l'ID du joueur : ");
         int id = Integer.parseInt(scanner.nextLine());
 
         Optional<Player> playerOpt = Optional.ofNullable(playerService.getPlayer(id));
         playerOpt.ifPresentOrElse(player -> {
-            System.out.println("Pseudo : " + player.getPseudo());
-            System.out.println("Âge : " + player.getAge());
-        }, () -> System.out.println("Player introuvable."));
+            logger.info("Pseudo : " + player.getPseudo());
+            logger.info("Âge : " + player.getAge());
+        }, () -> logger.info("Player introuvable."));
     }
 
     private void displayAllPlayers() {
-        System.out.println("\n=== Afficher tous les Players ===");
+        logger.info("\n=== Afficher tous les Players ===");
         List<Player> players = playerService.getAllPlayers();
         players.forEach(player -> {
-            System.out.println("ID : " + player.getId());
-            System.out.println("Pseudo : " + player.getPseudo());
-            System.out.println("Âge : " + player.getAge());
-            System.out.println("--------------");
+            logger.info("ID : " + player.getId());
+            logger.info("Pseudo : " + player.getPseudo());
+            logger.info("Âge : " + player.getAge());
+            logger.info("--------------");
         });
     }
 }

@@ -4,9 +4,7 @@ import org.yassine.service.Interface.IGameService;
 import org.yassine.service.Interface.IPlayerService;
 import org.yassine.service.Interface.ITeamService;
 import org.yassine.service.Interface.ITournamentService;
-import org.yassine.service.impl.GameServiceImp;
-import org.yassine.service.impl.PlayerServiceImp;
-import org.yassine.service.impl.TournamentServiceImp;
+
 
 import java.util.Scanner;
 
