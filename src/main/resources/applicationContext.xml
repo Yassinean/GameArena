@@ -37,6 +37,9 @@
     <bean id="playerDao" class="org.yassine.dao.impl.PlayerDaoImpl">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
+    <bean id="teamDao" class="org.yassine.dao.impl.TeamDaoImpl">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
 
     <bean id="tournamentService" class="org.yassine.service.impl.TournamentServiceImp">
         <!-- Injecting the tournamentDao bean via constructor -->
@@ -49,6 +52,17 @@
     <bean id="playerService" class="org.yassine.service.impl.PlayerServiceImp">
         <!-- Injecting the tournamentDao bean via constructor -->
         <constructor-arg ref="playerDao" />
+    </bean>
+    <bean id="teamService" class="org.yassine.service.impl.TeamServiceImp">
+        <!-- Injecting the tournamentDao bean via constructor -->
+        <constructor-arg ref="teamDao" />
+    </bean>
+
+    <bean id="consoleUI" class="org.yassine.view.ConsoleUI">
+        <constructor-arg ref="playerService" />
+        <constructor-arg ref="gameService" />
+        <constructor-arg ref="teamService" />
+        <constructor-arg ref="tournamentService" />
     </bean>
 
 

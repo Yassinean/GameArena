@@ -2,6 +2,11 @@ package org.yassine.view;
 
 import org.yassine.service.Interface.IGameService;
 import org.yassine.service.Interface.IPlayerService;
+import org.yassine.service.Interface.ITeamService;
+import org.yassine.service.Interface.ITournamentService;
+import org.yassine.service.impl.GameServiceImp;
+import org.yassine.service.impl.PlayerServiceImp;
+import org.yassine.service.impl.TournamentServiceImp;
 
 import java.util.Scanner;
 
@@ -12,8 +17,9 @@ public class ConsoleUI {
     private final TeamUI teamUI;
     private final TournamentUI tournamentUI;
     private final Scanner scanner = new Scanner(System.in);
+
     // Constructor to inject services
-    public ConsoleUI(IPlayerService playerService, IGameService gameService, ITeamService teamService) {
+    public ConsoleUI(IPlayerService playerService, IGameService gameService, ITeamService teamService, ITournamentService tournamentService) {
         this.playerUI = new PlayerUI();
         this.playerUI.setPlayerService(playerService);  // Inject PlayerService
 
@@ -22,6 +28,12 @@ public class ConsoleUI {
 
         this.teamUI = new TeamUI();
         this.teamUI.setTeamService(teamService);  // Inject TeamService
+        this.teamUI.setPlayerService(playerService);  // Inject PlayerService
+        this.teamUI.setTournamentService(tournamentService);  // Inject TournamentService
+
+        this.tournamentUI = new TournamentUI();
+        this.tournamentUI.setTournamentService(tournamentService);  // Inject TournamentService
+        this.tournamentUI.setGameService(gameService);  // Inject GameService
     }
 
     public void showMainMenu() {

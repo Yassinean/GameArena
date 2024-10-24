@@ -54,4 +54,12 @@ public class Team implements Serializable {
     public void setTournament(Tournament tournament) {
         this.tournament = tournament;
     }
+
+    public Integer getClassement() {
+        return classement;
+    }
+
+    public void setClassement(Integer classement) {
+        this.classement = classement;
+    }
 }

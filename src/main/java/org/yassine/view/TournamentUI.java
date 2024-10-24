@@ -14,12 +14,17 @@ import java.util.Scanner;
 public class TournamentUI {
     private static ITournamentService tournamentService;
     private static IGameService gameService;
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        tournamentService = (ITournamentService) context.getBean("tournamentService");
-        gameService = (IGameService) context.getBean("gameService");
 
+    // Setter injection
+    public void setTournamentService(ITournamentService tournamentService) {
+        this.tournamentService = tournamentService;
+    }
 
+    public void setGameService(IGameService gameService) {
+        this.gameService = gameService;
+    }
+
+    public void showMenu() {
         Scanner scanner = new Scanner(System.in);
         int choice;
 
@@ -283,7 +288,7 @@ public class TournamentUI {
         int id = scanner.nextInt();
         Tournament tournament = tournamentService.getTournament(id);
 
-        tournamentService.deleteTournament(tournament);
+        tournamentService.deleteTournament(id);
         System.out.println("Tournament deleted successfully!");
     }
 }
