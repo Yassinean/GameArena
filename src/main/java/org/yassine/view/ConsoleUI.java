@@ -4,12 +4,14 @@ import org.yassine.service.Interface.IGameService;
 import org.yassine.service.Interface.IPlayerService;
 import org.yassine.service.Interface.ITeamService;
 import org.yassine.service.Interface.ITournamentService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
 public class ConsoleUI {
 
+    private final Logger logger = LoggerFactory.getLogger(ConsoleUI.class);
     private final PlayerUI playerUI;
     private final GameUI gameUI;
     private final TeamUI teamUI;
@@ -37,11 +39,11 @@ public class ConsoleUI {
     public void showMainMenu() {
         int choice;
         do {
-            System.out.println("\n=== Menu Principal ===");
-            System.out.println("1. Gestion des Joueurs");
-            System.out.println("2. Gestion des Jeux");
-            System.out.println("3. Gestion des Équipes");
-            System.out.println("4. Quitter");
+            logger.info("\n=== Menu Principal ===");
+            logger.info("1. Gestion des Joueurs");
+            logger.info("2. Gestion des Jeux");
+            logger.info("3. Gestion des Équipes");
+            logger.info("4. Quitter");
             System.out.print("Veuillez choisir une option : ");
 
             choice = Integer.parseInt(scanner.nextLine());
@@ -57,10 +59,10 @@ public class ConsoleUI {
                     teamUI.showMenu();  // Call Team UI
                     break;
                 case 4:
-                    System.out.println("Au revoir !");
+                    logger.info("Au revoir !");
                     break;
                 default:
-                    System.out.println("Choix non valide. Veuillez réessayer.");
+                    logger.info("Choix non valide. Veuillez réessayer.");
             }
         } while (choice != 4);
     }

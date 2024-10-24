@@ -7,9 +7,12 @@ import org.yassine.service.Interface.IGameService;
 
 import java.util.List;
 import java.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameUI {
     private static IGameService gameService;
+    private static Logger logger = LoggerFactory.getLogger(GameUI.class);
 
     public void setGameService(IGameService gameService) {
         this.gameService = gameService;
@@ -22,13 +25,13 @@ public class GameUI {
         int choice;
 
         do {
-            System.out.println("\n=== Game Management Menu ===");
-            System.out.println("1. Add a new game");
-            System.out.println("2. Update an existing game");
-            System.out.println("3. View a game by ID");
-            System.out.println("4. View all games");
-            System.out.println("5. Delete a game");
-            System.out.println("0. Exit");
+            logger.info("\n=== Game Management Menu ===");
+            logger.info("1. Add a new game");
+            logger.info("2. Update an existing game");
+            logger.info("3. View a game by ID");
+            logger.info("4. View all games");
+            logger.info("5. Delete a game");
+            logger.info("0. Exit");
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
 
@@ -49,10 +52,10 @@ public class GameUI {
                     deleteGame(scanner);
                     break;
                 case 0:
-                    System.out.println("Exiting...");
+                    logger.info("Exiting...");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    logger.info("Invalid choice. Please try again.");
             }
         } while (choice != 0);
 
@@ -60,7 +63,7 @@ public class GameUI {
     }
 
     private static void addGame(Scanner scanner) {
-        System.out.println("\n=== Add New Game ===");
+        logger.info("\n=== Add New Game ===");
 
         System.out.print("Enter game name: ");
         scanner.nextLine();  // Consume newline
@@ -79,10 +82,10 @@ public class GameUI {
         newGame.setDureeMoyenneMatch(duration);
 
         gameService.createGame(newGame);
-        System.out.println("Game added successfully!");
+        logger.info("Game added successfully!");
     }
     private static void updateGame(Scanner scanner) {
-        System.out.println("\n=== Update Game ===");
+        logger.info("\n=== Update Game ===");
 
         System.out.print("Enter the game ID to update: ");
         int id = scanner.nextInt();
@@ -90,7 +93,7 @@ public class GameUI {
 
         Game existingGame = gameService.getGame(id);
         if (existingGame == null) {
-            System.out.println("Game with ID " + id + " not found.");
+            logger.info("Game with ID " + id + " not found.");
             return;
         }
 
@@ -108,26 +111,26 @@ public class GameUI {
         existingGame.setDureeMoyenneMatch(newDuration);
 
         gameService.updateGame(existingGame);
-        System.out.println("Game updated successfully!");
+        logger.info("Game updated successfully!");
     }
     private static void viewGameById(Scanner scanner) {
-        System.out.println("\n=== View Game by ID ===");
+        logger.info("\n=== View Game by ID ===");
 
         System.out.print("Enter the game ID: ");
         int id = scanner.nextInt();
 
         Game game = gameService.getGame(id);
         if (game != null) {
-            System.out.println("Game ID: " + game.getId());
-            System.out.println("Name: " + game.getNom());
-            System.out.println("Difficulty: " + game.getDifficulte());
-            System.out.println("Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
+            logger.info("Game ID: " + game.getId());
+            logger.info("Name: " + game.getNom());
+            logger.info("Difficulty: " + game.getDifficulte());
+            logger.info("Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
         } else {
-            System.out.println("Game with ID " + id + " not found.");
+            logger.info("Game with ID " + id + " not found.");
         }
     }
     private static void deleteGame(Scanner scanner) {
-        System.out.println("\n=== Delete Game ===");
+        logger.info("\n=== Delete Game ===");
 
         System.out.print("Enter the game ID to delete: ");
         int id = scanner.nextInt();
@@ -135,20 +138,20 @@ public class GameUI {
 
         if (game != null) {
             gameService.deleteGame(game.getId());
-            System.out.println("Game deleted successfully!");
+            logger.info("Game deleted successfully!");
         } else {
-            System.out.println("Game with ID " + id + " not found.");
+            logger.info("Game with ID " + id + " not found.");
         }
     }
     private static void viewAllGames() {
-        System.out.println("\n=== View All Games ===");
+        logger.info("\n=== View All Games ===");
 
         List<Game> games = gameService.getAllGames();
         if (games.isEmpty()) {
-            System.out.println("No games found.");
+            logger.info("No games found.");
         } else {
             for (Game game : games) {
-                System.out.println("Game ID: " + game.getId() +
+                logger.info("Game ID: " + game.getId() +
                         ", Name: " + game.getNom() +
                         ", Difficulty: " + game.getDifficulte() +
                         ", Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
