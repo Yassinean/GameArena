@@ -8,7 +8,7 @@ public interface IGameService {
     void runSampleOperations();
     boolean createGame(Game game);
     boolean updateGame(Game game);
-    boolean deleteGame(Game game);
+    boolean deleteGame(int id);
     Game getGame(int id);
     List<Game> getAllGames();
 }

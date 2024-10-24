@@ -1,10 +1,11 @@
-package org.yassine.dao.Interface;
+package org.yassine.service.Interface;
 
 import org.yassine.model.Player;
 
 import java.util.List;
 
-public interface IPlayerDao {
+public interface IPlayerService {
+    void runSampleOperations();
     boolean createPlayer(Player player);
     boolean updatePlayer(Player player);
     boolean deletePlayer(int id);

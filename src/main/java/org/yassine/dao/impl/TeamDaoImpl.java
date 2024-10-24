@@ -1,13 +1,13 @@
 package org.yassine.dao.impl;
 
-import org.yassine.dao.Interface.IPlayerDao;
-import org.yassine.model.Player;
+import org.yassine.dao.Interface.ITeamDao;
+import org.yassine.model.Team;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public class PlayerDaoImpl implements IPlayerDao {
+public class TeamDaoImpl implements ITeamDao {
     private EntityManagerFactory entityManagerFactory;
 
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
@@ -19,7 +19,7 @@ public class PlayerDaoImpl implements IPlayerDao {
     }
 
     @Override
-    public boolean createPlayer(Player player) {
+    public boolean createTeam(Team player) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
@@ -35,7 +35,7 @@ public class PlayerDaoImpl implements IPlayerDao {
     }
 
     @Override
-    public boolean updatePlayer(Player player) {
+    public boolean updateTeam(Team player) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
@@ -51,11 +51,11 @@ public class PlayerDaoImpl implements IPlayerDao {
     }
 
     @Override
-    public boolean deletePlayer(int id) {
+    public boolean deleteTeam(int id) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Player tour = em.find(Player.class, id);
+            Team tour = em.find(Team.class, id);
             if (tour != null) {
                 em.remove(tour);
             }
@@ -70,10 +70,10 @@ public class PlayerDaoImpl implements IPlayerDao {
     }
 
     @Override
-    public Player getPlayer(int id) {
+    public Team getTeam(int id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Player.class, id);
+            return em.find(Team.class, id);
         }catch (RuntimeException e) {
             em.getTransaction().rollback();
         }
@@ -81,10 +81,10 @@ public class PlayerDaoImpl implements IPlayerDao {
     }
 
     @Override
-    public List<Player> getAllPlayers() {
+    public List<Team> getAllTeams() {
         EntityManager entityManager = getEntityManager();
         try {
-            return entityManager.createQuery("FROM Player", Player.class).getResultList();
+            return entityManager.createQuery("FROM Team", Team.class).getResultList();
         } finally {
             entityManager.close();
         }

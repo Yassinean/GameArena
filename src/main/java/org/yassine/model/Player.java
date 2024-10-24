@@ -16,7 +16,7 @@ public class Player implements Serializable {
     private String pseudo;
 
     @Column(nullable = false)
-    private String age;
+    private int age;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
@@ -35,10 +35,10 @@ public class Player implements Serializable {
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
     }
-    public String getAge() {
+    public int getAge() {
         return age;
     }
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
     public Team getTeam() {

@@ -21,7 +21,7 @@ public class Team implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name = "tournament_id")  // Foreign key column in the team table
+    @JoinColumn(name = "tournament_id")
     private Tournament tournament;
 
 

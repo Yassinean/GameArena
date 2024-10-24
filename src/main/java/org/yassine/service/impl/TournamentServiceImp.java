@@ -10,7 +10,6 @@ public class TournamentServiceImp implements ITournamentService {
 
     private final ITournamentDao tournamentDao;
 
-    // Constructor injection for dependency
     public TournamentServiceImp(ITournamentDao tournamentDao) {
         this.tournamentDao = tournamentDao;
     }
@@ -32,8 +31,8 @@ public class TournamentServiceImp implements ITournamentService {
     }
 
     @Override
-    public boolean deleteTournament(Tournament tournament) {
-        return tournamentDao.deleteTournament(tournament);
+    public boolean deleteTournament(int id) {
+        return tournamentDao.deleteTournament(id);
     }
 
     @Override

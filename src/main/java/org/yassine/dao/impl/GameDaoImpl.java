@@ -1,7 +1,6 @@
 package org.yassine.dao.impl;
 
 import org.yassine.dao.Interface.IGameDao;
-import org.yassine.dao.Interface.IGameDao;
 import org.yassine.model.Game;
 
 import javax.persistence.EntityManager;
@@ -11,7 +10,6 @@ import java.util.List;
 public class GameDaoImpl implements IGameDao {
     private EntityManagerFactory entityManagerFactory;
 
-    // Setter for dependency injection
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -53,11 +51,11 @@ public class GameDaoImpl implements IGameDao {
     }
 
     @Override
-    public boolean deleteGame(Game game) {
+    public boolean deleteGame(int id) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Game tour = em.find(Game.class, game.getId());
+            Game tour = em.find(Game.class, id);
             if (tour != null) {
                 em.remove(tour);
             }

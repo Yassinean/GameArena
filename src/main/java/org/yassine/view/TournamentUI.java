@@ -213,18 +213,18 @@ public class TournamentUI {
 
 
         System.out.print("Enter new tournament title: ");
-        String newTitle = scanner.next();
+        String newTitle = scanner.nextLine();
 
         System.out.print("Enter new tournament game: ");
-        String newGame = scanner.next();
+        String newGame = scanner.nextLine();
 
         System.out.print("Enter new start date (YYYY-MM-DD): ");
-        String newStartDate = scanner.next();
+        String newStartDate = scanner.nextLine();
 
         System.out.print("Enter new end date (YYYY-MM-DD): ");
-        String newEndDate = scanner.next();
+        String newEndDate = scanner.nextLine();
 
-        System.out.print("Enter new tournament status (PLANNED/ONGOING/COMPLETED): ");
+        System.out.print("Enter new tournament status (PLANIFIE / EN_COURS / TERMINE / ANNULE): ");
         String newStatus = scanner.next();
 
         Tournament updatedTournament = new Tournament();

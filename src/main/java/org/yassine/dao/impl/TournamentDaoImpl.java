@@ -10,7 +10,6 @@ import java.util.List;
 public class TournamentDaoImpl implements ITournamentDao {
     private EntityManagerFactory entityManagerFactory;
 
-    // Setter for dependency injection
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -51,11 +50,11 @@ public class TournamentDaoImpl implements ITournamentDao {
     }
 
     @Override
-    public boolean deleteTournament(Tournament tournament) {
+    public boolean deleteTournament(int id) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Tournament tour = em.find(Tournament.class, tournament.getId());
+            Tournament tour = em.find(Tournament.class,id);
             if (tour != null) {
                 em.remove(tour);
             }

@@ -10,7 +10,6 @@ public class GameServiceImp implements IGameService {
 
     private final IGameDao gameDao;
 
-    // Constructor injection for dependency
     public GameServiceImp(IGameDao gameDao) {
         this.gameDao = gameDao;
     }
@@ -32,8 +31,8 @@ public class GameServiceImp implements IGameService {
     }
 
     @Override
-    public boolean deleteGame(Game game) {
-        return gameDao.deleteGame(game);
+    public boolean deleteGame(int id) {
+        return gameDao.deleteGame(id);
     }
 
     @Override
