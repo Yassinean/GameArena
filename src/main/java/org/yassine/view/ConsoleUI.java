@@ -36,12 +36,15 @@ public class ConsoleUI {
     public void showMainMenu() {
         int choice;
         do {
-            System.out.println("\n=== Menu Principal ===");
-            System.out.println("1. Gestion des Joueurs");
-            System.out.println("2. Gestion des Jeux");
-            System.out.println("3. Gestion des Équipes");
-            System.out.println("4. Gestion des Tournois");
-            System.out.println("5. Quitter");
+            System.out.println("\n╔════════════════════════════════════╗");
+            System.out.println("║          MENU PRINCIPALE           ║");
+            System.out.println("╠════════════════════════════════════╣");
+            System.out.println("║ 1. Gestion des Joueurs             ║");
+            System.out.println("║ 2. Gestion des Jeux                ║");
+            System.out.println("║ 3. Gestion des Équipes             ║");
+            System.out.println("║ 4. Gestion des Tournois            ║");
+            System.out.println("║ 5. Exit                            ║");
+            System.out.println("╚════════════════════════════════════╝");
             System.out.print("Veuillez choisir une option : ");
 
             choice = ValidationUtils.readInt(); // Use validation method

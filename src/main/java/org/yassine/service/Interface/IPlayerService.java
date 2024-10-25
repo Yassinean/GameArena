@@ -5,7 +5,6 @@ import org.yassine.model.Player;
 import java.util.List;
 
 public interface IPlayerService {
-    void runSampleOperations();
     boolean createPlayer(Player player);
     boolean updatePlayer(Player player);
     boolean deletePlayer(int id);

@@ -10,7 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-public class TournamentDaoImpl implements ITournamentDao {
+public class TournamentDaoImplExt implements ITournamentDao {
     private EntityManagerFactory entityManagerFactory;
 
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
@@ -121,7 +121,6 @@ public class TournamentDaoImpl implements ITournamentDao {
 
     @Override
     public double calculerdureeEstimeeTournoi(int id) {
-        EntityManager em = getEntityManager();
         Tournament tournoi = this.getTournament(id);
         if (tournoi == null) {
             throw new IllegalArgumentException("Tournament not found");
@@ -130,7 +129,10 @@ public class TournamentDaoImpl implements ITournamentDao {
         int nbEquipes = teamsParticipating.size();
         int nbMatchs = nbEquipes - 1;
         Game game = this.findGameByTournoiId(id);
-        return (nbMatchs * game.getDureeMoyenneMatch()) + ((nbMatchs - 1) * tournoi.getTempsPauseEntreMatchs());
+        double durre_estimate = (nbMatchs * game.getDureeMoyenneMatch()) + ((nbMatchs - 1) * tournoi.getTempsPauseEntreMatchs()) + (tournoi.getTempsCeremonie());
+        tournoi.setDureeEstimee(durre_estimate);
+        this.updateTournament(tournoi);
+        return (nbMatchs * game.getDureeMoyenneMatch()) + ((nbMatchs - 1) * tournoi.getTempsPauseEntreMatchs()) + (tournoi.getTempsCeremonie());
 
     }
 }

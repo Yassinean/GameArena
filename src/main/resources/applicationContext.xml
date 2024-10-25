@@ -41,6 +41,7 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
+    <!-- Service Bean -->
     <bean id="tournamentService" class="org.yassine.service.impl.TournamentServiceImp">
         <!-- Injecting the tournamentDao bean via constructor -->
         <constructor-arg ref="tournamentDao" />

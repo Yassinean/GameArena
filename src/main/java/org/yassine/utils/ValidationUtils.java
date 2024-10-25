@@ -157,6 +157,7 @@ public class ValidationUtils {
     public static String readValidTournamentTitle() {
         String title;
         while (true) {
+            System.out.println("Entrer le titre du tournoi => ");
             title = scanner.nextLine();
             if (title != null && !title.trim().isEmpty()) {
                 return title;

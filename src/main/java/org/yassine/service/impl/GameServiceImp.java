@@ -14,12 +14,6 @@ public class GameServiceImp implements IGameService {
         this.gameDao = gameDao;
     }
 
-
-    @Override
-    public void runSampleOperations() {
-
-    }
-
     @Override
     public boolean createGame(Game game) {
         return gameDao.createGame(game);

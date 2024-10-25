@@ -23,14 +23,17 @@ public class PlayerUI {
     public void showMenu() {
         int choice;
         do {
-            System.out.println("\n=== Menu de Gestion des Players ===");
-            System.out.println("1. Créer un joueur");
-            System.out.println("2. Modifier un joueur");
-            System.out.println("3. Supprimer un joueur");
-            System.out.println("4. Afficher un joueur");
-            System.out.println("5. Afficher tous les joueurs");
-            System.out.println("6. Assigner un joueur au equipe");
-            System.out.println("7. Quitter");
+            System.out.println("\n╔════════════════════════════════════╗");
+            System.out.println("║      PLAYERS MANAGAMENT MENU       ║");
+            System.out.println("╠════════════════════════════════════╣");
+            System.out.println("║ 1. Creer un joueur                 ║");
+            System.out.println("║ 2. Modifier un joueur              ║");
+            System.out.println("║ 3. Supprimer une equipe            ║");
+            System.out.println("║ 4. Afficher un joueur              ║");
+            System.out.println("║ 5. Afficher tous les joueurs       ║");
+            System.out.println("║ 6. Assigner un joueur a une equipe ║");
+            System.out.println("║ 7. EXIT                            ║");
+            System.out.println("╚════════════════════════════════════╝");
             System.out.print("Veuillez choisir une option : ");
 
             choice = ValidationUtils.readInt(); // Use validation method

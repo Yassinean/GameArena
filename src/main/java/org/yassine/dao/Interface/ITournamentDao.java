@@ -9,5 +9,6 @@ public interface ITournamentDao {
     boolean updateTournament(Tournament tournament);
     boolean deleteTournament(int id);
     Tournament getTournament(int id);
+    double calculerdureeEstimeeTournoi(int id);
     List<Tournament> getAllTournaments();
 }

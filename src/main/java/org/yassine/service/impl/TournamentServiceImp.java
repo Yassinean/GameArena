@@ -14,12 +14,6 @@ public class TournamentServiceImp implements ITournamentService {
         this.tournamentDao = tournamentDao;
     }
 
-
-    @Override
-    public void runSampleOperations() {
-
-    }
-
     @Override
     public boolean createTournament(Tournament tournament) {
         return tournamentDao.createTournament(tournament);
@@ -43,5 +37,10 @@ public class TournamentServiceImp implements ITournamentService {
     @Override
     public List<Tournament> getAllTournaments() {
         return tournamentDao.getAllTournaments();
+    }
+
+    @Override
+    public double calculerDureeEstimeeTournoi(int id) {
+        return tournamentDao.calculerdureeEstimeeTournoi(id);
     }
 }

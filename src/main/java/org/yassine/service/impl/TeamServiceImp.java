@@ -15,12 +15,6 @@ public class TeamServiceImp implements ITeamService {
         this.teamDao = teamDao;
     }
 
-
-    @Override
-    public void runSampleOperations() {
-
-    }
-
     @Override
     public boolean createTeam(Team team) {
         return teamDao.createTeam(team);

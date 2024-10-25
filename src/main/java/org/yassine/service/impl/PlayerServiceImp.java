@@ -15,12 +15,6 @@ public class PlayerServiceImp implements IPlayerService {
         this.playerDao = playerDao;
     }
 
-
-    @Override
-    public void runSampleOperations() {
-
-    }
-
     @Override
     public boolean createPlayer(Player player) {
         return playerDao.createPlayer(player);
