@@ -2,6 +2,7 @@ package org.yassine;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.yassine.provider.ApplicationContextProvider;
 import org.yassine.service.impl.GameServiceImp;
 import org.yassine.service.impl.PlayerServiceImp;
 import org.yassine.view.ConsoleUI;
@@ -11,8 +12,7 @@ import org.yassine.view.ConsoleUI;
 public class Main {
     public static void main(String[] args) {
         // Load Spring application context
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-
+        ApplicationContext context = ApplicationContextProvider.getContext();
         // Retrieve the ConsoleUI bean
         ConsoleUI consoleUI = (ConsoleUI) context.getBean("consoleUI");
 

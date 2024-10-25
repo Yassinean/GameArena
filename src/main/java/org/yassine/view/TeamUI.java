@@ -1,13 +1,14 @@
 package org.yassine.view;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.yassine.model.Player;
 import org.yassine.model.Team;
 import org.yassine.model.Tournament;
+import org.yassine.provider.ApplicationContextProvider;
 import org.yassine.service.Interface.IPlayerService;
 import org.yassine.service.Interface.ITeamService;
 import org.yassine.service.Interface.ITournamentService;
+import org.yassine.utils.ValidationUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class TeamUI {
     }
 
     public static void showMenu() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ApplicationContext context = ApplicationContextProvider.getContext();
         teamService = (ITeamService) context.getBean("teamService");
         tournamentService = (ITournamentService) context.getBean("tournamentService");
         playerService = (IPlayerService) context.getBean("playerService");
@@ -43,17 +44,17 @@ public class TeamUI {
         int choice;
 
         do {
-            logger.info("\n=== Team Management Menu ===");
-            logger.info("1. Add a new team");
-            logger.info("2. Update an existing team");
-            logger.info("3. View a team by ID");
-            logger.info("4. View all teams");
-            logger.info("5. Delete a team");
-            logger.info("6. assign a Team to Tournament ");
-            logger.info("7. assign a Player to a Team ");
-            logger.info("0. Exit");
+            System.out.println("\n=== Team Management Menu ===");
+            System.out.println("1. Add a new team");
+            System.out.println("2. Update an existing team");
+            System.out.println("3. View a team by ID");
+            System.out.println("4. View all teams");
+            System.out.println("5. Delete a team");
+            System.out.println("6. Assign a Team to Tournament");
+            System.out.println("7. Assign a Player to a Team");
+            System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+            choice = ValidationUtils.readInt(); // Use validation method
 
             switch (choice) {
                 case 1:
@@ -72,58 +73,54 @@ public class TeamUI {
                     deleteTeam(scanner);
                     break;
                 case 6:
-                    System.out.print("Enter the team ID to assigne : ");
-                    int id = scanner.nextInt();
+                    System.out.print("Enter the team ID to assign: ");
+                    int id = ValidationUtils.readInt(); // Use validation method
                     assignTournamentToTeam(scanner, teamService.getTeam(id));
                     break;
                 case 7:  // Assign player to team
                     assignPlayerToTeam(scanner);
                     break;
                 case 0:
-                    logger.info("Exiting...");
-                    break;
+                    System.out.println("Exiting...");
+                    return;
                 default:
-                    logger.info("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
-        }while(choice != 0);
+        } while (choice != 0);
 
         scanner.close();
     }
 
     private static void addTeam(Scanner scanner) {
-        logger.info("\n=== Add New Team ===");
+        System.out.println("\n=== Add New Team ===");
 
         System.out.print("Enter team name: ");
-        scanner.nextLine();
-        String name = scanner.nextLine();
-
+        String name = ValidationUtils.readValidTeamName(); // Use validation method
 
         System.out.print("Enter the Rank: ");
-        int classement = scanner.nextInt();
-        scanner.nextLine();
+        int ranking = ValidationUtils.readValidRanking(); // Use validation method
 
         Team newTeam = new Team();
         newTeam.setNom(name);
-        newTeam.setClassement(classement);
+        newTeam.setClassement(ranking);
         System.out.print("Assign a tournament to this team? (y/n): ");
         String assignTournament = scanner.nextLine();
         if (assignTournament.equalsIgnoreCase("y")) {
             assignTournamentToTeam(scanner, newTeam);
         }
         teamService.createTeam(newTeam);
-        logger.info("Team added successfully!");
+        System.out.println("Team added successfully!");
     }
 
     private static void updateTeam(Scanner scanner) {
-        logger.info("\n=== Update Team ===");
+        System.out.println("\n=== Update Team ===");
 
         System.out.print("Enter the team ID to update: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Team existingTeam = teamService.getTeam(id);
         if (existingTeam == null) {
-            logger.info("Team with ID " + id + " not found.");
+            System.out.println("Team with ID " + id + " not found.");
             return;
         }
 
@@ -141,136 +138,137 @@ public class TeamUI {
         }
 
         teamService.updateTeam(existingTeam);
-        logger.info("Team updated successfully!");
+        System.out.println("Team updated successfully!");
     }
+
     private static void viewTeamById(Scanner scanner) {
-        logger.info("\n=== View Team by ID ===");
+        System.out.println("\n=== View Team by ID ===");
 
         System.out.print("Enter the team ID: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Team team = teamService.getTeam(id);
         if (team != null) {
-            logger.info("Team ID: " + team.getId());
-            logger.info("Name: " + team.getNom());
+            System.out.println("Team ID: " + team.getId());
+            System.out.println("Name: " + team.getNom());
 
             // Display players
             List<Player> players = team.getPlayers();
             if (players != null && !players.isEmpty()) {
-                logger.info("Players:");
+                System.out.println("Players:");
                 for (Player player : players) {
-                    logger.info(" - " + player.getPseudo());
+                    System.out.println(" - " + player.getPseudo());
                 }
             } else {
-                logger.info("No players assigned.");
+                System.out.println("No players assigned.");
             }
 
             if (team.getTournament() != null) {
-                logger.info("Tournament: " + team.getTournament().getTitre());
+                System.out.println("Tournament: " + team.getTournament().getTitre());
             } else {
-                logger.info("No tournament assigned.");
+                System.out.println("No tournament assigned.");
             }
 
-            logger.info("Classement: " + (team.getClassement() != null ? team.getClassement() : "Not ranked"));
+            System.out.println("Ranking: " + (team.getClassement() != null ? team.getClassement() : "Not ranked"));
         } else {
-            logger.info("Team with ID " + id + " not found.");
+            System.out.println("Team with ID " + id + " not found.");
         }
     }
+
     private static void deleteTeam(Scanner scanner) {
-        logger.info("\n=== Delete Team ===");
+        System.out.println("\n=== Delete Team ===");
 
         System.out.print("Enter the team ID to delete: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Team team = teamService.getTeam(id);
         if (team != null) {
             teamService.deleteTeam(id);
-            logger.info("Team deleted successfully!");
+            System.out.println("Team deleted successfully!");
         } else {
-            logger.info("Team with ID " + id + " not found.");
+            System.out.println("Team with ID " + id + " not found.");
         }
     }
+
     private static void viewAllTeams() {
-        logger.info("\n=== View All Teams ===");
+        System.out.println("\n=== View All Teams ===");
 
         List<Team> teams = teamService.getAllTeams();
         if (teams.isEmpty()) {
-            logger.info("No teams found.");
+            System.out.println("No teams found.");
         } else {
             for (Team team : teams) {
-                logger.info("Team ID: " + team.getId() + ", Name: " + team.getNom());
+                System.out.println("Team ID: " + team.getId() + ", Name: " + team.getNom());
             }
         }
     }
+
     private static void assignTournamentToTeam(Scanner scanner, Team team) {
         List<Tournament> tournaments = tournamentService.getAllTournaments();
         if (tournaments.isEmpty()) {
-            logger.info("No tournaments found. Please add a tournaments first.");
+            System.out.println("No tournaments found. Please add a tournament first.");
             return;
         }
 
-        logger.info("\nAvailable tournaments:");
+        System.out.println("\nAvailable tournaments:");
         for (Tournament tournament : tournaments) {
-            logger.info("Team ID: " + tournament.getId() + ", Name: " + tournament.getTitre());
+            System.out.println("Tournament ID: " + tournament.getId() + ", Name: " + tournament.getTitre());
         }
         System.out.print("Enter the tournament ID to assign: ");
-        int tournamentId = scanner.nextInt();
-        scanner.nextLine();
+        int tournamentId = ValidationUtils.readInt(); // Use validation method
 
         team.setTournament(tournamentService.getTournament(tournamentId));
         if (team.getTournament() != null) {
-            logger.info("Tournament assigned: " + team.getTournament().getTitre());
+            System.out.println("Tournament assigned: " + team.getTournament().getTitre());
         } else {
-            logger.info("Invalid tournament ID.");
+            System.out.println("Invalid tournament ID.");
         }
     }
+
     private static void assignPlayerToTeam(Scanner scanner) {
-        logger.info("\n=== Assign Player to Team ===");
+        System.out.println("\n=== Assign Player to Team ===");
 
         List<Player> players = playerService.getAllPlayers();
         if (players.isEmpty()) {
-            logger.info("No players found. Please add a players first.");
+            System.out.println("No players found. Please add players first.");
             return;
         }
 
-        logger.info("\nAvailable players:");
+        System.out.println("\nAvailable players:");
         for (Player player : players) {
-            logger.info("Team ID: " + player.getId() + ", Name: " + player.getPseudo());
+            System.out.println("Player ID: " + player.getId() + ", Name: " + player.getPseudo());
         }
         System.out.print("Enter the player ID to assign: ");
-        int playerId = scanner.nextInt();
+        int playerId = ValidationUtils.readInt(); // Use validation method
         Player player = playerService.getPlayer(playerId);
 
         if (player == null) {
-            logger.info("Player with ID " + playerId + " not found.");
+            System.out.println("Player with ID " + playerId + " not found.");
             return;
         }
 
-        List<Team> teams = teamService.getAllTeams();  // Assuming this method exists in your TeamService
+        List<Team> teams = teamService.getAllTeams();
         if (teams.isEmpty()) {
-            logger.info("No teams found. Please add a team first.");
+            System.out.println("No teams found. Please add a team first.");
             return;
         }
 
-        logger.info("\nAvailable Teams:");
+        System.out.println("\nAvailable Teams:");
         for (Team team : teams) {
-            logger.info("Team ID: " + team.getId() + ", Name: " + team.getNom());
+            System.out.println("Team ID: " + team.getId() + ", Name: " + team.getNom());
         }
-
 
         System.out.print("Enter the team ID to assign the player to: ");
-        int teamId = scanner.nextInt();
+        int teamId = ValidationUtils.readInt(); // Use validation method
         Team team = teamService.getTeam(teamId);
 
         if (team == null) {
-            logger.info("Team with ID " + teamId + " not found.");
+            System.out.println("Team with ID " + teamId + " not found.");
             return;
         }
 
         player.setTeam(team);
         playerService.updatePlayer(player);
-        logger.info("Player " + player.getPseudo() + " has been assigned to team " + team.getNom() + " successfully!");
+        System.out.println("Player " + player.getPseudo() + " has been assigned to team " + team.getNom() + " successfully!");
     }
-
 }
-

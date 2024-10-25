@@ -1,39 +1,37 @@
 package org.yassine.view;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.yassine.model.Game;
+import org.yassine.provider.ApplicationContextProvider;
 import org.yassine.service.Interface.IGameService;
+import org.yassine.utils.ValidationUtils;
 
 import java.util.List;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GameUI {
     private static IGameService gameService;
-    private static Logger logger = LoggerFactory.getLogger(GameUI.class);
 
     public void setGameService(IGameService gameService) {
         this.gameService = gameService;
     }
 
     public static void showMenu() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ApplicationContext context = ApplicationContextProvider.getContext();
         gameService = (IGameService) context.getBean("gameService");
         Scanner scanner = new Scanner(System.in);
         int choice;
 
         do {
-            logger.info("\n=== Game Management Menu ===");
-            logger.info("1. Add a new game");
-            logger.info("2. Update an existing game");
-            logger.info("3. View a game by ID");
-            logger.info("4. View all games");
-            logger.info("5. Delete a game");
-            logger.info("0. Exit");
+            System.out.println("\n=== Game Management Menu ===");
+            System.out.println("1. Add a new game");
+            System.out.println("2. Update an existing game");
+            System.out.println("3. View a game by ID");
+            System.out.println("4. View all games");
+            System.out.println("5. Delete a game");
+            System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+            choice = ValidationUtils.readInt(); // Use validation method
 
             switch (choice) {
                 case 1:
@@ -52,29 +50,25 @@ public class GameUI {
                     deleteGame(scanner);
                     break;
                 case 0:
-                    logger.info("Exiting...");
-                    break;
+                    System.out.println("Exiting...");
+                    return;
                 default:
-                    logger.info("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
-
-        scanner.close();
     }
 
     private static void addGame(Scanner scanner) {
-        logger.info("\n=== Add New Game ===");
+        System.out.println("\n=== Add New Game ===");
 
         System.out.print("Enter game name: ");
-        scanner.nextLine();  // Consume newline
-        String name = scanner.nextLine();
+        String name = ValidationUtils.readValidGameName(); // Use the new validation method
 
         System.out.print("Enter difficulty (Easy/Medium/Hard): ");
-        String difficulty = scanner.nextLine();
+        String difficulty = ValidationUtils.readValidDifficulty(); // Use the new validation method
 
         System.out.print("Enter average match duration (in minutes): ");
-        double duration = scanner.nextDouble();
-        scanner.nextLine();
+        double duration = ValidationUtils.readValidDuration(); // Use the new validation method
 
         Game newGame = new Game();
         newGame.setNom(name);
@@ -82,83 +76,83 @@ public class GameUI {
         newGame.setDureeMoyenneMatch(duration);
 
         gameService.createGame(newGame);
-        logger.info("Game added successfully!");
+        System.out.println("Game added successfully!");
     }
+
     private static void updateGame(Scanner scanner) {
-        logger.info("\n=== Update Game ===");
+        System.out.println("\n=== Update Game ===");
 
         System.out.print("Enter the game ID to update: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Game existingGame = gameService.getGame(id);
         if (existingGame == null) {
-            logger.info("Game with ID " + id + " not found.");
+            System.out.println("Game with ID " + id + " not found.");
             return;
         }
 
         System.out.print("Enter new game name: ");
-        String newName = scanner.nextLine();
+        String newName = ValidationUtils.readValidGameName(); // Use validation method
 
         System.out.print("Enter new difficulty (Easy/Medium/Hard): ");
-        String newDifficulty = scanner.nextLine();
+        String newDifficulty = ValidationUtils.readValidDifficulty(); // Use validation method
 
         System.out.print("Enter new average match duration (in minutes): ");
-        double newDuration = scanner.nextDouble();
+        double newDuration = ValidationUtils.readValidDuration(); // Use validation method
 
         existingGame.setNom(newName);
         existingGame.setDifficulte(newDifficulty);
         existingGame.setDureeMoyenneMatch(newDuration);
 
         gameService.updateGame(existingGame);
-        logger.info("Game updated successfully!");
+        System.out.println("Game updated successfully!");
     }
+
     private static void viewGameById(Scanner scanner) {
-        logger.info("\n=== View Game by ID ===");
+        System.out.println("\n=== View Game by ID ===");
 
         System.out.print("Enter the game ID: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Game game = gameService.getGame(id);
         if (game != null) {
-            logger.info("Game ID: " + game.getId());
-            logger.info("Name: " + game.getNom());
-            logger.info("Difficulty: " + game.getDifficulte());
-            logger.info("Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
+            System.out.println("Game ID: " + game.getId());
+            System.out.println("Name: " + game.getNom());
+            System.out.println("Difficulty: " + game.getDifficulte());
+            System.out.println("Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
         } else {
-            logger.info("Game with ID " + id + " not found.");
+            System.out.println("Game with ID " + id + " not found.");
         }
     }
+
     private static void deleteGame(Scanner scanner) {
-        logger.info("\n=== Delete Game ===");
+        System.out.println("\n=== Delete Game ===");
 
         System.out.print("Enter the game ID to delete: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
         Game game = gameService.getGame(id);
 
         if (game != null) {
             gameService.deleteGame(game.getId());
-            logger.info("Game deleted successfully!");
+            System.out.println("Game deleted successfully!");
         } else {
-            logger.info("Game with ID " + id + " not found.");
+            System.out.println("Game with ID " + id + " not found.");
         }
     }
+
     private static void viewAllGames() {
-        logger.info("\n=== View All Games ===");
+        System.out.println("\n=== View All Games ===");
 
         List<Game> games = gameService.getAllGames();
         if (games.isEmpty()) {
-            logger.info("No games found.");
+            System.out.println("No games found.");
         } else {
             for (Game game : games) {
-                logger.info("Game ID: " + game.getId() +
+                System.out.println("Game ID: " + game.getId() +
                         ", Name: " + game.getNom() +
                         ", Difficulty: " + game.getDifficulte() +
                         ", Average Match Duration: " + game.getDureeMoyenneMatch() + " minutes");
             }
         }
     }
-
-
 }
-

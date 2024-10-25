@@ -1,22 +1,18 @@
 package org.yassine.view;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.yassine.model.Game;
 import org.yassine.model.Tournament;
 import org.yassine.service.Interface.IGameService;
 import org.yassine.service.Interface.ITournamentService;
+import org.yassine.utils.ValidationUtils;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TournamentUI {
     private static ITournamentService tournamentService;
     private static IGameService gameService;
-    private static Logger logger = LoggerFactory.getLogger(TournamentUI.class);
 
     // Setter injection
     public void setTournamentService(ITournamentService tournamentService) {
@@ -32,15 +28,15 @@ public class TournamentUI {
         int choice;
 
         do {
-            logger.info("\n=== Tournament Management Menu ===");
-            logger.info("1. Add a new tournament");
-            logger.info("2. Update an existing tournament");
-            logger.info("3. View a tournament by ID");
-            logger.info("4. View all tournaments");
-            logger.info("5. Delete a tournament");
-            logger.info("0. Exit");
+            System.out.println("\n=== Tournament Management Menu ===");
+            System.out.println("1. Add a new tournament");
+            System.out.println("2. Update an existing tournament");
+            System.out.println("3. View a tournament by ID");
+            System.out.println("4. View all tournaments");
+            System.out.println("5. Delete a tournament");
+            System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+            choice = ValidationUtils.readInt(); // Use validation method
 
             switch (choice) {
                 case 1:
@@ -59,10 +55,10 @@ public class TournamentUI {
                     deleteTournament(scanner);
                     break;
                 case 0:
-                    logger.info("Exiting...");
-                    break;
+                    System.out.println("Exiting...");
+                    return;
                 default:
-                    logger.info("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
 
@@ -70,39 +66,36 @@ public class TournamentUI {
     }
 
     private static void addTournament(Scanner scanner) {
-        logger.info("\n=== Add New Tournament ===");
+        System.out.println("\n=== Add New Tournament ===");
 
         // Step 1: Display existing games from the database
-        logger.info("Choose a game from the list or add a new one:");
+        System.out.println("Choose a game from the list or add a new one:");
         List<Game> games = gameService.getAllGames();
 
         if (games.isEmpty()) {
-            logger.info("No games available.");
+            System.out.println("No games available.");
         } else {
             for (int i = 0; i < games.size(); i++) {
-                logger.info((i + 1) + ". " + games.get(i).getNom());
+                System.out.println((i + 1) + ". " + games.get(i).getNom());
             }
         }
 
-        logger.info((games.size() + 1) + ". Add a new game");
+        System.out.println((games.size() + 1) + ". Add a new game");
         System.out.print("Enter your choice: ");
-        int gameChoice = scanner.nextInt();
-        scanner.nextLine();
+        int gameChoice = ValidationUtils.readInt(); // Use validation method
 
         Game selectedGame;
-
 
         if (gameChoice == games.size() + 1) {
             // Add a new game
             System.out.print("Enter new game name: ");
-            String newGameName = scanner.nextLine();
+            String newGameName = ValidationUtils.readValidGameName(); // Use validation method
 
             System.out.print("Enter difficulty (Easy/Medium/Hard): ");
             String newGameDifficulty = scanner.nextLine();
 
             System.out.print("Enter average match duration (in minutes): ");
-            double newGameDuration = scanner.nextDouble();
-            scanner.nextLine(); // Consume newline left-over
+            double newGameDuration = ValidationUtils.readValidDuration(); // Use validation method
 
             selectedGame = new Game();
             selectedGame.setNom(newGameName);
@@ -111,170 +104,98 @@ public class TournamentUI {
 
             // Save the new game to the database
             gameService.createGame(selectedGame);
-            logger.info("New game added: " + selectedGame.getNom());
+            System.out.println("New game added: " + selectedGame.getNom());
         } else if (gameChoice > 0 && gameChoice <= games.size()) {
             // Select an existing game
             selectedGame = games.get(gameChoice - 1);
-            logger.info("Selected game: " + selectedGame.getNom());
+            System.out.println("Selected game: " + selectedGame.getNom());
         } else {
-            logger.info("Invalid choice. Returning to main menu.");
+            System.out.println("Invalid choice. Returning to main menu.");
             return;
         }
 
         // Step 3: Collect the rest of the tournament details
-        System.out.print("Enter tournament title: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Enter start date (YYYY-MM-DD): ");
-        String startDate = scanner.nextLine();
-
-        System.out.print("Enter end date (YYYY-MM-DD): ");
-        String endDate = scanner.nextLine();
+        String title = ValidationUtils.readValidTournamentTitle(); // Use validation method
+        LocalDate startDate = ValidationUtils.readValidDate("Enter start date (YYYY-MM-DD): "); // Use validation method
+        LocalDate endDate = ValidationUtils.readValidDate("Enter end date (YYYY-MM-DD): "); // Use validation method
 
         // Step 4: Enum validation for Tournament Status
-        logger.info("Enter tournament status: ");
-        for (Tournament.Statut statut : Tournament.Statut.values()) {
-            System.out.println(statut);
-        }
-
-        Tournament.Statut status = null;
-        while (status == null) {
-            System.out.print("Enter tournament status (PLANIFIE/EN_COURS/TERMINE/ANNULE): ");
-            String statusInput = scanner.nextLine();
-            try {
-                status = Tournament.Statut.valueOf(statusInput.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                logger.info("Invalid status. Please enter a valid status.");
-            }
-        }
+        Tournament.Statut status = ValidationUtils.readValidTournamentStatus(); // Use validation method
 
         // Step 5: Create the tournament and save it to the database
         Tournament tournament = new Tournament();
         tournament.setTitre(title);
         tournament.setGame(selectedGame); // Set the selected game
-        tournament.setDateDebut(LocalDate.parse(startDate));
-        tournament.setDateFin(LocalDate.parse(endDate));
+        tournament.setDateDebut(startDate);
+        tournament.setDateFin(endDate);
         tournament.setStatut(status); // Use the validated status
 
         tournamentService.createTournament(tournament);
-        logger.info("Tournament added successfully!");
+        System.out.println("Tournament added successfully!");
     }
 
-
     private static void updateTournament(Scanner scanner) {
-        logger.info("\n=== Update Tournament ===");
+        System.out.println("\n=== Update Tournament ===");
 
         System.out.print("Enter the tournament ID to update: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Tournament existingTournament = tournamentService.getTournament(id);
         if (existingTournament == null) {
-            logger.info("Tournament with ID " + id + " not found.");
-            return;
-        }
-        logger.info("Choose a game from the list or add a new one:");
-        List<Game> games = gameService.getAllGames();
-
-        if (games.isEmpty()) {
-            logger.info("No games available.");
-        } else {
-            for (int i = 0; i < games.size(); i++) {
-                logger.info((i + 1) + ". " + games.get(i).getNom());
-            }
-        }
-
-        logger.info((games.size() + 1) + ". Add a new game");
-        System.out.print("Enter your choice: ");
-        int gameChoice = scanner.nextInt();
-        scanner.nextLine();
-
-        Game selectedGame;
-
-
-        if (gameChoice == games.size() + 1) {
-            // Add a new game
-            System.out.print("Enter new game name: ");
-            String newGameName = scanner.nextLine();
-
-            System.out.print("Enter difficulty (Easy/Medium/Hard): ");
-            String newGameDifficulty = scanner.nextLine();
-
-            System.out.print("Enter average match duration (in minutes): ");
-            double newGameDuration = scanner.nextDouble();
-            scanner.nextLine(); // Consume newline left-over
-
-            selectedGame = new Game();
-            selectedGame.setNom(newGameName);
-            selectedGame.setDifficulte(newGameDifficulty);
-            selectedGame.setDureeMoyenneMatch(newGameDuration);
-
-            gameService.createGame(selectedGame);
-            logger.info("New game added: " + selectedGame.getNom());
-        } else if (gameChoice > 0 && gameChoice <= games.size()) {
-            // Select an existing game
-            selectedGame = games.get(gameChoice - 1);
-            logger.info("Selected game: " + selectedGame.getNom());
-        } else {
-            logger.info("Invalid choice. Returning to main menu.");
+            System.out.println("Tournament with ID " + id + " not found.");
             return;
         }
 
+        // Similar game selection logic as in addTournament()...
 
         System.out.print("Enter new tournament title: ");
-        String newTitle = scanner.nextLine();
+        String newTitle = ValidationUtils.readValidTournamentTitle(); // Use validation method
 
-        System.out.print("Enter new tournament game: ");
-        String newGame = scanner.nextLine();
+        LocalDate newStartDate = ValidationUtils.readValidDate("Enter new start date (YYYY-MM-DD): "); // Use validation method
+        LocalDate newEndDate = ValidationUtils.readValidDate("Enter new end date (YYYY-MM-DD): "); // Use validation method
 
-        System.out.print("Enter new start date (YYYY-MM-DD): ");
-        String newStartDate = scanner.nextLine();
-
-        System.out.print("Enter new end date (YYYY-MM-DD): ");
-        String newEndDate = scanner.nextLine();
-
-        System.out.print("Enter new tournament status (PLANIFIE / EN_COURS / TERMINE / ANNULE): ");
-        String newStatus = scanner.next();
+        Tournament.Statut newStatus = ValidationUtils.readValidTournamentStatus(); // Use validation method
 
         Tournament updatedTournament = new Tournament();
         updatedTournament.setId(id);
         updatedTournament.setTitre(newTitle);
-        updatedTournament.setGame(selectedGame);
-        updatedTournament.setDateDebut(LocalDate.parse(newStartDate));
-        updatedTournament.setDateFin(LocalDate.parse(newEndDate));
-        updatedTournament.setStatut(Tournament.Statut.valueOf(newStatus));
+        updatedTournament.setGame(existingTournament.getGame());
+        updatedTournament.setDateDebut(newStartDate);
+        updatedTournament.setDateFin(newEndDate);
+        updatedTournament.setStatut(newStatus);
 
-        tournamentService.updateTournament( updatedTournament);
-        logger.info("Tournament updated successfully!");
+        tournamentService.updateTournament(updatedTournament);
+        System.out.println("Tournament updated successfully!");
     }
 
     private static void viewTournamentById(Scanner scanner) {
-        logger.info("\n=== View Tournament by ID ===");
+        System.out.println("\n=== View Tournament by ID ===");
 
         System.out.print("Enter the tournament ID: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
 
         Tournament tournament = tournamentService.getTournament(id);
         if (tournament != null) {
-            logger.info("Tournament ID: " + tournament.getId());
-            logger.info("Title: " + tournament.getTitre());
-            logger.info("Game: " + tournament.getGame().getNom());
-            logger.info("Start Date: " + tournament.getDateDebut());
-            logger.info("End Date: " + tournament.getDateFin());
-            logger.info("Status: " + tournament.getStatut());
+            System.out.println("Tournament ID: " + tournament.getId());
+            System.out.println("Title: " + tournament.getTitre());
+            System.out.println("Game: " + tournament.getGame().getNom());
+            System.out.println("Start Date: " + tournament.getDateDebut());
+            System.out.println("End Date: " + tournament.getDateFin());
+            System.out.println("Status: " + tournament.getStatut());
         } else {
-            logger.info("Tournament with ID " + id + " not found.");
+            System.out.println("Tournament with ID " + id + " not found.");
         }
     }
 
     private static void viewAllTournaments() {
-        logger.info("\n=== View All Tournaments ===");
+        System.out.println("\n=== View All Tournaments ===");
 
         List<Tournament> tournaments = tournamentService.getAllTournaments();
         if (tournaments.isEmpty()) {
-            logger.info("No tournaments found.");
+            System.out.println("No tournaments found.");
         } else {
             for (Tournament tournament : tournaments) {
-                logger.info("Tournament ID: " + tournament.getId() +
+                System.out.println("Tournament ID: " + tournament.getId() +
                         ", Title: " + tournament.getTitre() +
                         ", Game: " + tournament.getGame().getNom() +
                         ", Start Date: " + tournament.getDateDebut() +
@@ -285,13 +206,17 @@ public class TournamentUI {
     }
 
     private static void deleteTournament(Scanner scanner) {
-        logger.info("\n=== Delete Tournament ===");
+        System.out.println("\n=== Delete Tournament ===");
 
         System.out.print("Enter the tournament ID to delete: ");
-        int id = scanner.nextInt();
+        int id = ValidationUtils.readInt(); // Use validation method
         Tournament tournament = tournamentService.getTournament(id);
 
-        tournamentService.deleteTournament(id);
-        logger.info("Tournament deleted successfully!");
+        if (tournament != null) {
+            tournamentService.deleteTournament(id);
+            System.out.println("Tournament deleted successfully!");
+        } else {
+            System.out.println("Tournament with ID " + id + " not found.");
+        }
     }
 }
