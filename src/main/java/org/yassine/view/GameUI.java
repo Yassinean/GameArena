@@ -24,7 +24,7 @@ public class GameUI {
             System.out.println("\n╔════════════════════════════════════╗");
             System.out.println("║       GAME MANAGAMENT MENU         ║");
             System.out.println("╠════════════════════════════════════╣");
-            System.out.println("║ 1. Creer un nouvel    jeu          ║");
+            System.out.println("║ 1. Creer un nouvel jeu             ║");
             System.out.println("║ 2. Modifier un jeu                 ║");
             System.out.println("║ 3. View jeu by ID                  ║");
             System.out.println("║ 4. View all games                  ║");
@@ -32,7 +32,7 @@ public class GameUI {
             System.out.println("║ 0. EXIT                            ║");
             System.out.println("╚════════════════════════════════════╝");
             System.out.print("Enter your choice: ");
-            choice = ValidationUtils.readInt(); // Use validation method
+            choice = ValidationUtils.readInt();
 
             switch (choice) {
                 case 1 -> addGame(scanner);
@@ -40,10 +40,14 @@ public class GameUI {
                 case 3 -> viewGameById(scanner);
                 case 4 -> viewAllGames();
                 case 5 -> deleteGame(scanner);
-                case 0 -> System.out.println("Exiting...");
+                case 0 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
+        scanner.close();
     }
 
     private static void addGame(Scanner scanner) {

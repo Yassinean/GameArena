@@ -64,7 +64,6 @@ public class TournamentUI {
                     System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
-
         scanner.close();
     }
 

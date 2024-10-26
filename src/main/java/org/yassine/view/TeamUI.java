@@ -39,47 +39,52 @@ public class TeamUI {
 //        teamService = context.getBean(ITeamService.class);
 //        tournamentService = context.getBean(ITournamentService.class);
 //        playerService = context.getBean(IPlayerService.class);
+        Scanner scanner = new Scanner(System.in);
+        int choice;
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            int choice;
-            do {
-                System.out.println("\n╔════════════════════════════════════╗");
-                System.out.println("║       TEAM MANAGAMENT MENU         ║");
-                System.out.println("╠════════════════════════════════════╣");
-                System.out.println("║ 1. Creer une nouvelle equipe       ║");
-                System.out.println("║ 2. Modifier une equipe             ║");
-                System.out.println("║ 3. View a team by ID               ║");
-                System.out.println("║ 4. View all teams                  ║");
-                System.out.println("║ 5. Supprimer une equipe            ║");
-                System.out.println("║ 6. Assigner equipe au tournoi      ║");
-                System.out.println("║ 7. Assigner un joueur a une equipe ║");
-                System.out.println("║ 8. Remove player from team         ║ ");
-                System.out.println("║ 9. Remove team from tournament     ║");
-                System.out.println("║ 0. EXIT                            ║");
-                System.out.println("╚════════════════════════════════════╝");
-                System.out.print("Enter your choice: ");
-                choice = ValidationUtils.readInt();
+        do {
+            System.out.println("\n╔════════════════════════════════════╗");
+            System.out.println("║       TEAM MANAGEMENT MENU         ║");
+            System.out.println("╠════════════════════════════════════╣");
+            System.out.println("║ 1. Create a new team              ║");
+            System.out.println("║ 2. Update a team                   ║");
+            System.out.println("║ 3. View a team by ID               ║");
+            System.out.println("║ 4. View all teams                  ║");
+            System.out.println("║ 5. Delete a team                   ║");
+            System.out.println("║ 6. Assign team to tournament        ║");
+            System.out.println("║ 7. Assign player to a team         ║");
+            System.out.println("║ 8. Remove player from team         ║");
+            System.out.println("║ 9. Remove team from tournament     ║");
+            System.out.println("║ 0. EXIT                            ║");
+            System.out.println("╚════════════════════════════════════╝");
+            System.out.print("Enter your choice: ");
+            choice = ValidationUtils.readInt();
 
-                switch (choice) {
-                    case 1 -> addTeam(scanner);
-                    case 2 -> updateTeam(scanner);
-                    case 3 -> viewTeamById(scanner);
-                    case 4 -> viewAllTeams();
-                    case 5 -> deleteTeam(scanner);
-                    case 6 -> {
-                        System.out.print("--- Enter the team ID to assign: ==> ");
-                        int id = ValidationUtils.readInt();
-                        assignTournamentToTeam(scanner, teamService.getTeam(id));
-                    }
-                    case 7 -> assignPlayerToTeam(scanner);
-                    case 8 -> removePlayerFromTeam(scanner);
-                    case 9 -> removeTeamFromTournament(scanner);
-                    case 0 -> System.out.println("Exiting...");
-                    default -> System.out.println("Invalid choice. Please try again.");
+            switch (choice) {
+                case 1 -> addTeam(scanner);
+                case 2 -> updateTeam(scanner);
+                case 3 -> viewTeamById(scanner);
+                case 4 -> viewAllTeams();
+                case 5 -> deleteTeam(scanner);
+                case 6 -> {
+                    System.out.print("--- Enter the team ID to assign: ==> ");
+                    int id = ValidationUtils.readInt();
+                    assignTournamentToTeam(scanner, teamService.getTeam(id));
                 }
-            } while (choice != 0);
-        }
+                case 7 -> assignPlayerToTeam(scanner);
+                case 8 -> removePlayerFromTeam(scanner);
+                case 9 -> removeTeamFromTournament(scanner);
+                case 0 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 0);
+
+        scanner.close(); // Close the scanner at the end
     }
+
 
     private static void addTeam(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════╗");

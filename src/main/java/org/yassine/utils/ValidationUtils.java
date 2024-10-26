@@ -32,7 +32,7 @@ public class ValidationUtils {
     public static int readInt() {
         while (true) {
             try {
-                int value = Integer.parseInt(scanner.nextLine());
+                int value = scanner.nextInt();
                 if (value < 0) {
                     System.out.println("Veuillez entrer un nombre entier supérieur à zéro.");
                     continue;

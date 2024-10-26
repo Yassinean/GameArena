@@ -64,6 +64,7 @@ public class PlayerUI {
                     System.out.println("Choix non valide.");
             }
         } while (choice != 0);
+        scanner.close();
     }
 
     private void createPlayer() {
