@@ -35,10 +35,10 @@ public class TeamUI {
     }
 
     public static void showMenu() {
-        ApplicationContext context = ApplicationContextProvider.getContext();
-        teamService = context.getBean(ITeamService.class);
-        tournamentService = context.getBean(ITournamentService.class);
-        playerService = context.getBean(IPlayerService.class);
+//        ApplicationContext context = ApplicationContextProvider.getContext();
+//        teamService = context.getBean(ITeamService.class);
+//        tournamentService = context.getBean(ITournamentService.class);
+//        playerService = context.getBean(IPlayerService.class);
 
         try (Scanner scanner = new Scanner(System.in)) {
             int choice;
@@ -53,7 +53,9 @@ public class TeamUI {
                 System.out.println("║ 5. Supprimer une equipe            ║");
                 System.out.println("║ 6. Assigner equipe au tournoi      ║");
                 System.out.println("║ 7. Assigner un joueur a une equipe ║");
-                System.out.println("║ 8. EXIT                            ║");
+                System.out.println("║ 8. Remove player from team         ║ ");
+                System.out.println("║ 9. Remove team from tournament     ║");
+                System.out.println("║ 0. EXIT                            ║");
                 System.out.println("╚════════════════════════════════════╝");
                 System.out.print("Enter your choice: ");
                 choice = ValidationUtils.readInt();
@@ -70,20 +72,24 @@ public class TeamUI {
                         assignTournamentToTeam(scanner, teamService.getTeam(id));
                     }
                     case 7 -> assignPlayerToTeam(scanner);
+                    case 8 -> removePlayerFromTeam(scanner);
+                    case 9 -> removeTeamFromTournament(scanner);
                     case 0 -> System.out.println("Exiting...");
                     default -> System.out.println("Invalid choice. Please try again.");
                 }
-            } while (choice != 8);
+            } while (choice != 0);
         }
     }
 
     private static void addTeam(Scanner scanner) {
-        System.out.println("\n--- Ajouter une nouvelle equipe ---");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║           ADD NEW TEAM         ║");
+        System.out.println("╚════════════════════════════════╝");
 
-        System.out.print("Entre le nom d'equipe : ");
+        System.out.print("Entre le nom d'equipe => ");
         String name = ValidationUtils.readValidTeamName();
 
-        System.out.print("Entre sa classement : ");
+        System.out.print("Entre sa classement => ");
         int ranking = ValidationUtils.readValidRanking();
 
         Team newTeam = new Team();
@@ -102,7 +108,9 @@ public class TeamUI {
     }
 
     private static void updateTeam(Scanner scanner) {
-        System.out.println("\n=== Modifier Equipe ===");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║          UPDATE TEAM           ║");
+        System.out.println("╚════════════════════════════════╝");
 
         System.out.print("Enter the team ID to update => ");
         int id = ValidationUtils.readInt();
@@ -115,26 +123,47 @@ public class TeamUI {
             return;
         }
 
-        System.out.print("Enter new team name (leave blank to keep current): ");
-        String newName = scanner.nextLine();
-        if (!newName.trim().isEmpty()) {
-            existingTeam.setNom(newName);
-        }
+        while (true) {
+            System.out.println("\nWhat would you like to update?");
+            System.out.println("╔════════════════════════════════════════╗");
+            System.out.printf("║ %s : %-35s ║%n", "1", "Name (Current: " + existingTeam.getNom() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "2", "Tournament Assignment");
+            System.out.printf("║ %s : %-35s ║%n", "3", "Save Changes and Exit");
+            System.out.println("╚════════════════════════════════════════╝");
 
-        System.out.print("Update tournament assignment? (y/n): ");
-        if (scanner.nextLine().equalsIgnoreCase("y")) {
-            assignTournamentToTeam(scanner, existingTeam);
-        }
+            System.out.print("Your choice => ");
+            int choice = ValidationUtils.readInt();
 
-        teamService.updateTeam(existingTeam);
-        System.out.println("===========================");
-        System.out.println("| Team updated successfully |");
-        System.out.println("===========================");
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter new team name (leave blank to keep current): ");
+                    String newName = scanner.nextLine();
+                    if (!newName.trim().isEmpty()) {
+                        existingTeam.setNom(newName);
+                    }
+                    break;
+                case 2:
+                    System.out.print("Update tournament assignment? (y/n): ");
+                    if (scanner.nextLine().equalsIgnoreCase("y")) {
+                        assignTournamentToTeam(scanner, existingTeam);
+                    }
+                    break;
+                case 3:
+                    teamService.updateTeam(existingTeam);
+                    System.out.println("===========================");
+                    System.out.println("| Team updated successfully |");
+                    System.out.println("===========================");
+                    return; // Exit the update loop
+                default:
+                    System.out.println("Invalid choice, please try again.");
+            }
+        }
     }
 
     private static void viewTeamById(Scanner scanner) {
-        System.out.println("\n=== View Team by ID ===");
-
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║            VIEW TEAM           ║");
+        System.out.println("╚════════════════════════════════╝");
         System.out.print("Enter the team ID => ");
         int id = ValidationUtils.readInt();
 
@@ -171,8 +200,9 @@ public class TeamUI {
     }
 
     private static void deleteTeam(Scanner scanner) {
-        System.out.println("\n=== Delete Team ===");
-
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║           DELETE TEAM          ║");
+        System.out.println("╚════════════════════════════════╝");
         System.out.print("Enter the team ID to delete => ");
         int id = ValidationUtils.readInt();
 
@@ -190,7 +220,9 @@ public class TeamUI {
     }
 
     private static void viewAllTeams() {
-        System.out.println("\n=== View All Teams ===");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║         VIEW ALL TEAMS         ║");
+        System.out.println("╚════════════════════════════════╝");
 
         List<Team> teams = teamService.getAllTeams();
         if (teams.isEmpty()) {
@@ -208,14 +240,13 @@ public class TeamUI {
 
     private static void assignTournamentToTeam(Scanner scanner, Team team) {
         if (team == null) {
+            System.out.println("******************************");
             System.out.println("Error: The team object is null.");
+            System.out.println("******************************");
             return;
         }
 
-        // Fetch the list of available tournaments
         List<Tournament> tournaments = tournamentService.getAllTournaments();
-
-        // Check if tournaments are available
         if (tournaments.isEmpty()) {
             System.out.println("****************************************");
             System.out.println("No tournaments found. Please add a tournament first.");
@@ -223,26 +254,21 @@ public class TeamUI {
             return;
         }
 
-        // Display available tournaments
-        System.out.println("\nAvailable tournaments:");
+        System.out.println("\n+++++++++++++ Available Tournaments +++++++++++++++");
         for (Tournament tournament : tournaments) {
             System.out.println("===========================");
-            System.out.println("Tournament ID => " + tournament.getId() + "\n Name => " + tournament.getTitre());
+            System.out.printf("Tournament ID => %d%nName => %s%n", tournament.getId(), tournament.getTitre());
             System.out.println("===========================");
         }
 
-        // Prompt for tournament ID
         System.out.print("Enter the tournament ID to assign => ");
         int tournamentId = ValidationUtils.readInt();
-
-        // Fetch the selected tournament
         Tournament selectedTournament = tournamentService.getTournament(tournamentId);
 
-        // Validate and assign the tournament
         if (selectedTournament != null) {
             team.setTournament(selectedTournament);
             System.out.println("=============================================");
-            System.out.println("Success! "+ team.getNom()+ " est participeé au => " + selectedTournament.getTitre());
+            System.out.printf("Success! %s has been assigned to %s.%n", team.getNom(), selectedTournament.getTitre());
             System.out.println("=============================================");
             teamService.updateTeam(team);
         } else {
@@ -253,7 +279,9 @@ public class TeamUI {
     }
 
     private static void assignPlayerToTeam(Scanner scanner) {
-        System.out.println("\n=== Assign Player to Team ===");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║     ASSIGN PLAYER TO TEAM      ║");
+        System.out.println("╚════════════════════════════════╝");
 
         List<Player> players = playerService.getAllPlayers();
         if (players.isEmpty()) {
@@ -263,12 +291,13 @@ public class TeamUI {
             return;
         }
 
-        System.out.println("\nAvailable players:");
+        System.out.println("\nAvailable Players:");
         for (Player player : players) {
             System.out.println("===========================");
-            System.out.println("Player ID => " + player.getId() + "\n Name => " + player.getPseudo());
+            System.out.printf("Player ID => %d%nName => %s%n", player.getId(), player.getPseudo());
             System.out.println("===========================");
         }
+
         System.out.print("Enter the player ID to assign => ");
         int playerId = ValidationUtils.readInt();
         Player player = playerService.getPlayer(playerId);
@@ -288,9 +317,11 @@ public class TeamUI {
             return;
         }
 
-        System.out.println("\nAvailable Teams:");
+        System.out.println("\n++++++++++++ Available Teams ++++++++++++");
         for (Team team : teams) {
-            System.out.println("Team ID => " + team.getId() + "\n Name => " + team.getNom());
+            System.out.println("===========================");
+            System.out.printf("Team ID => %d%nName => %s%n", team.getId(), team.getNom());
+            System.out.println("===========================");
         }
 
         System.out.print("Enter the team ID to assign the player to => ");
@@ -307,7 +338,112 @@ public class TeamUI {
         player.setTeam(team);
         playerService.updatePlayer(player);
         System.out.println("=============================================");
-        System.out.println("Player " + player.getPseudo() + " has been assigned to team " + team.getNom() + " successfully!");
+        System.out.printf("Player %s has been assigned to team %s successfully!%n", player.getPseudo(), team.getNom());
         System.out.println("=============================================");
     }
+
+    private static void removePlayerFromTeam(Scanner scanner) {
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║    REMOVE PLAYER FROM TEAM     ║");
+        System.out.println("╚════════════════════════════════╝");
+
+        List<Player> players = playerService.getAllPlayers();
+        if (players.isEmpty()) {
+            System.out.println("*****************************");
+            System.out.println("No players found. Please add players first.");
+            System.out.println("*****************************");
+            return;
+        }
+
+        System.out.println("\nAvailable Players:");
+        for (Player player : players) {
+            System.out.println("===========================");
+            System.out.printf("ID => %d, Name => %s%n", player.getId(), player.getPseudo());
+            System.out.println("===========================");
+        }
+
+        System.out.print("Enter the player ID to remove => ");
+        int playerId = ValidationUtils.readInt();
+        Player player = playerService.getPlayer(playerId);
+
+        if (player == null) {
+            System.out.println("*****************************");
+            System.out.println("Player with ID " + playerId + " not found :(");
+            System.out.println("*****************************");
+            return;
+        }
+
+        if (player.getTeam() == null) {
+            System.out.println("The player " + player.getPseudo() + " is not assigned to any team.");
+            return;
+        }
+
+        player.setTeam(null);
+        playerService.updatePlayer(player);
+        System.out.println("=============================================");
+        System.out.printf("Player %s has been successfully removed from their team!%n", player.getPseudo());
+        System.out.println("=============================================");
+    }
+
+    private static void removeTeamFromTournament(Scanner scanner) {
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║  REMOVE TEAM FROM TOURNAMENT   ║");
+        System.out.println("╚════════════════════════════════╝");
+        List<Tournament> tournaments = tournamentService.getAllTournaments();
+        if (tournaments.isEmpty()) {
+            System.out.println("*****************************");
+            System.out.println("No tournaments found. Please add tournaments first.");
+            System.out.println("*****************************");
+            return;
+        }
+
+        System.out.println("\nAvailable Tournaments:");
+        for (Tournament tournament : tournaments) {
+            System.out.println("===========================");
+            System.out.printf("Tournament ID => %d%nTitle => %s%n", tournament.getId(), tournament.getTitre());
+            System.out.println("===========================");
+        }
+
+        System.out.print("Enter the tournament ID to remove a team from => ");
+        int tournamentId = ValidationUtils.readInt();
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+
+        if (tournament == null) {
+            System.out.println("*****************************");
+            System.out.println("Tournament with ID " + tournamentId + " not found.");
+            System.out.println("*****************************");
+            return;
+        }
+
+        List<Team> teams = tournament.getTeams();
+        if (teams.isEmpty()) {
+            System.out.println("No teams are currently associated with the tournament " + tournament.getTitre());
+            return;
+        }
+
+        System.out.println("\nAvailable Teams:");
+        for (Team team : teams) {
+            System.out.println("===========================");
+            System.out.printf("Team ID => %d%nName => %s%n", team.getId(), team.getNom());
+            System.out.println("===========================");
+        }
+
+        System.out.print("Enter the team ID to remove from the tournament => ");
+        int teamId = ValidationUtils.readInt();
+        Team team = teamService.getTeam(teamId);
+
+        if (team == null) {
+            System.out.println("*****************************");
+            System.out.println("Team with ID " + teamId + " not found.");
+            System.out.println("*****************************");
+            return;
+        }
+
+        team.setTournament(null);
+        teamService.updateTeam(team);
+        System.out.println("=============================================");
+        System.out.printf("Team %s has been successfully removed from the tournament %s!%n", team.getNom(), tournament.getTitre());
+        System.out.println("=============================================");
+    }
+
 }

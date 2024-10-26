@@ -32,11 +32,11 @@ public class PlayerUI {
             System.out.println("║ 4. Afficher un joueur              ║");
             System.out.println("║ 5. Afficher tous les joueurs       ║");
             System.out.println("║ 6. Assigner un joueur a une equipe ║");
-            System.out.println("║ 7. EXIT                            ║");
+            System.out.println("║ 0. EXIT                            ║");
             System.out.println("╚════════════════════════════════════╝");
             System.out.print("Veuillez choisir une option : ");
 
-            choice = ValidationUtils.readInt(); // Use validation method
+            choice = ValidationUtils.readInt();
 
             switch (choice) {
                 case 1:
@@ -57,21 +57,23 @@ public class PlayerUI {
                 case 6:
                     assignPlayerToTeam();
                     break;
-                case 7:
+                case 0:
                     System.out.println("Au revoir!");
                     return;
                 default:
                     System.out.println("Choix non valide.");
             }
-        } while (choice != 7);
+        } while (choice != 0);
     }
 
     private void createPlayer() {
-        System.out.println("\n--- Ajouter un nouveau joueur ---");
-        System.out.print("Entrez le pseudo du joueur : ");
-        String pseudo = ValidationUtils.readValidPseudo(); // Use the new validation method
-        System.out.print("Entrez l'âge du joueur : ");
-        int age = ValidationUtils.readValidAge(); // Use the new validation method
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║         ADD NEW PLAYER         ║");
+        System.out.println("╚════════════════════════════════╝");
+        System.out.print("Entrez le pseudo du joueur => ");
+        String pseudo = ValidationUtils.readValidPseudo();
+        System.out.print("Entrez l'âge du joueur => ");
+        int age = ValidationUtils.readValidAge();
 
         Player player = new Player();
         player.setPseudo(pseudo);
@@ -84,22 +86,43 @@ public class PlayerUI {
     }
 
     private void updatePlayer() {
-        System.out.println("\n--- Modifier un joueur ---");
-        System.out.print("Entrez l'ID du joueur à modifier : ");
-        int id = ValidationUtils.readInt(); // Use validation method
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║          UPDATE PLAYER         ║");
+        System.out.println("╚════════════════════════════════╝");
+        System.out.print("Entrez l'ID du joueur à modifier => ");
+        int id = ValidationUtils.readInt();
 
         Optional<Player> playerOpt = Optional.ofNullable(playerService.getPlayer(id));
         if (playerOpt.isPresent()) {
             Player player = playerOpt.get();
-            System.out.print("Nouveau pseudo : ");
-            player.setPseudo(ValidationUtils.readValidPseudo()); // Use validation method
-            System.out.print("Nouvel âge : ");
-            player.setAge(ValidationUtils.readValidAge()); // Use validation method
 
-            playerService.updatePlayer(player);
-            System.out.println("===========================");
-            System.out.println("| Joueur modifié avec succès |");
-            System.out.println("===========================");
+            while (true) {
+                System.out.println("Que voulez-vous modifier ?");
+                System.out.println("1. Pseudo");
+                System.out.println("2. Âge");
+                System.out.println("3. Quitter");
+                System.out.print("Votre choix => ");
+                int choice = ValidationUtils.readInt();
+
+                switch (choice) {
+                    case 1:
+                        System.out.print("Nouveau pseudo => ");
+                        player.setPseudo(ValidationUtils.readValidPseudo());
+                        break;
+                    case 2:
+                        System.out.print("Nouvel âge => ");
+                        player.setAge(ValidationUtils.readValidAge());
+                        break;
+                    case 3:
+                        playerService.updatePlayer(player);
+                        System.out.println("===========================");
+                        System.out.println("| Joueur modifié avec succès |");
+                        System.out.println("===========================");
+                        return; // Exit the update loop
+                    default:
+                        System.out.println("Choix invalide, veuillez réessayer.");
+                }
+            }
         } else {
             System.out.println("*******************");
             System.out.println("Player introuvable :(");
@@ -108,9 +131,11 @@ public class PlayerUI {
     }
 
     private void deletePlayer() {
-        System.out.println("\n--- Supprimer un Player ---");
-        System.out.print("Entrez l'ID du joueur à supprimer : ");
-        int id = ValidationUtils.readInt(); // Use validation method
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║          DELETE PLAYER         ║");
+        System.out.println("╚════════════════════════════════╝");
+        System.out.print("Entrez l'ID du joueur à supprimer => ");
+        int id = ValidationUtils.readInt();
 
         if (playerService.deletePlayer(id)) {
             System.out.println("===========================");
@@ -124,9 +149,11 @@ public class PlayerUI {
     }
 
     private void displayPlayer() {
-        System.out.println("\n--- Afficher un Player ---");
-        System.out.print("Entrez l'ID du joueur : ");
-        int id = ValidationUtils.readInt(); // Use validation method
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║           VIEW PLAYER          ║");
+        System.out.println("╚════════════════════════════════╝");
+        System.out.print("Entrez l'ID du joueur => ");
+        int id = ValidationUtils.readInt();
 
         Optional<Player> playerOpt = Optional.ofNullable(playerService.getPlayer(id));
         playerOpt.ifPresentOrElse(player -> {
@@ -136,7 +163,9 @@ public class PlayerUI {
     }
 
     private void displayAllPlayers() {
-        System.out.println("\n=== Afficher tous les Players ===");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║        VIEW ALL PLAYERS        ║");
+        System.out.println("╚════════════════════════════════╝");
         List<Player> players = playerService.getAllPlayers();
         players.forEach(player -> {
             System.out.println("=============================");
@@ -148,7 +177,9 @@ public class PlayerUI {
     }
 
     private void assignPlayerToTeam() {
-        System.out.println("\n--- Assign Player to Team ---");
+        System.out.println("\n╔════════════════════════════════╗");
+        System.out.println("║     ASSIGN PLAYER TO TEAM      ║");
+        System.out.println("╚════════════════════════════════╝");
         List<Player> players = playerService.getAllPlayers();
         if (players.isEmpty()) {
             System.out.println("*********************************************");
@@ -161,8 +192,8 @@ public class PlayerUI {
         for (Player player : players) {
             System.out.println("| Player ID => " + player.getId() + "| Name => " + player.getPseudo() + "| Age => " + player.getAge() + " |");
         }
-        System.out.print("Enter the player ID to assign: ");
-        int playerId = ValidationUtils.readInt(); // Use validation method
+        System.out.print("Enter the player ID to assign => ");
+        int playerId = ValidationUtils.readInt();
         Player player = playerService.getPlayer(playerId);
 
         if (player == null) {
@@ -186,7 +217,7 @@ public class PlayerUI {
         }
 
         System.out.print("--- Enter the team ID to assign the player to: ---");
-        int teamId = ValidationUtils.readInt(); // Use validation method
+        int teamId = ValidationUtils.readInt();
         Team team = teamService.getTeam(teamId);
 
         if (team == null) {

@@ -36,7 +36,7 @@ public class TournamentUI {
             System.out.println("║ 3. View a tournament by ID         ║");
             System.out.println("║ 4. View all tournaments            ║");
             System.out.println("║ 5. Delete a tournament             ║");
-            System.out.println("║ 6. Exit                            ║");
+            System.out.println("║ 0. Exit                            ║");
             System.out.println("╚════════════════════════════════════╝");
             System.out.print("Enter your choice: ");
             choice = ValidationUtils.readInt();
@@ -63,7 +63,7 @@ public class TournamentUI {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 6);
+        } while (choice != 0);
 
         scanner.close();
     }
@@ -127,10 +127,31 @@ public class TournamentUI {
 
         String title = ValidationUtils.readValidTournamentTitle();
         LocalDate startDate = ValidationUtils.readValidDate("Enter start date (YYYY-MM-DD): ");
-        LocalDate endDate = ValidationUtils.readValidDate("Enter end date (YYYY-MM-DD): ");
+        LocalDate endDate;
 
-        // Step 4: Enum validation for Tournament Status
+        while (true) {
+            endDate = ValidationUtils.readValidDate("Enter end date (YYYY-MM-DD): ");
+            if (endDate.isAfter(startDate)) {
+                break; // Valid date range
+            } else {
+                System.out.println("Erreur : La date de fin doit être postérieure à la date de début.");
+            }
+        }
         Tournament.Statut status = ValidationUtils.readValidTournamentStatus();
+        System.out.print("Enter estimated duration of the tournament (in hours): ");
+        double dureeEstimee = ValidationUtils.readValidDuration();
+
+        System.out.print("Enter break time between matches (in minutes): ");
+        double tempsPauseEntreMatchs =  ValidationUtils.readValidDuration();
+
+        System.out.print("Enter number of spectators: ");
+        int nbSpec = ValidationUtils.readInt();
+        scanner.nextLine();
+
+        System.out.print("Enter ceremony time (in minutes): ");
+        double tempsCeremonie = scanner.nextDouble();
+        scanner.nextLine();
+
 
         // Step 5: Create the tournament and save it to the database
         Tournament tournament = new Tournament();
@@ -139,7 +160,10 @@ public class TournamentUI {
         tournament.setDateDebut(startDate);
         tournament.setDateFin(endDate);
         tournament.setStatut(status);
-
+        tournament.setDureeEstimee(dureeEstimee);
+        tournament.setTempsPauseEntreMatchs(tempsPauseEntreMatchs);
+        tournament.setSpectators(nbSpec);
+        tournament.setTempsCeremonie(tempsCeremonie);
         tournamentService.createTournament(tournament);
         System.out.println("==============================");
         System.out.println("|Tournament added successfully |");
@@ -152,7 +176,7 @@ public class TournamentUI {
         System.out.println("╚════════════════════════════════╝");
 
         System.out.print("Enter the tournament ID to update: ");
-        int id = ValidationUtils.readInt(); // Use validation method
+        int id = ValidationUtils.readInt();
 
         Tournament existingTournament = tournamentService.getTournament(id);
         if (existingTournament == null) {
@@ -162,43 +186,96 @@ public class TournamentUI {
             return;
         }
 
-        System.out.print("Enter new tournament title: ");
-        String newTitle = ValidationUtils.readValidTournamentTitle();
+        while (true) {
+            System.out.println("\nWhat would you like to update?");
+            System.out.println("╔════════════════════════════════════════╗");
+            System.out.printf("║ %s : %-35s ║%n", "1", "Title (Current: " + existingTournament.getTitre() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "2", "Start Date (Current: " + existingTournament.getDateDebut() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "3", "End Date (Current: " + existingTournament.getDateFin() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "4", "Status (Current: " + existingTournament.getStatut() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "5", "Estimated Duration (Current: " + existingTournament.getDureeEstimee() + " hours)");
+            System.out.printf("║ %s : %-35s ║%n", "6", "Break Time (Current: " + existingTournament.getTempsPauseEntreMatchs() + " minutes)");
+            System.out.printf("║ %s : %-35s ║%n", "7", "Number of Spectators (Current: " + existingTournament.getSpectators() + ")");
+            System.out.printf("║ %s : %-35s ║%n", "8", "Ceremony Time (Current: " + existingTournament.getTempsCeremonie() + " minutes)");
+            System.out.printf("║ %s : %-35s ║%n", "9", "Save Changes and Exit");
+            System.out.println("╚════════════════════════════════════════╝");
+            System.out.print("Your choice => ");
+            int choice = ValidationUtils.readInt();
 
-        LocalDate newStartDate = ValidationUtils.readValidDate("Enter new start date (YYYY-MM-DD): ");
-        LocalDate newEndDate = ValidationUtils.readValidDate("Enter new end date (YYYY-MM-DD): ");
-
-        Tournament.Statut newStatus = ValidationUtils.readValidTournamentStatus();
-
-        Tournament updatedTournament = new Tournament();
-        updatedTournament.setId(id);
-        updatedTournament.setTitre(newTitle);
-        updatedTournament.setGame(existingTournament.getGame());
-        updatedTournament.setDateDebut(newStartDate);
-        updatedTournament.setDateFin(newEndDate);
-        updatedTournament.setStatut(newStatus);
-
-        tournamentService.updateTournament(updatedTournament);
-        System.out.println("===============================");
-        System.out.println("| Tournament updated successfully |");
-        System.out.println("===============================");
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter new tournament title: ");
+                    String newTitle = ValidationUtils.readValidTournamentTitle();
+                    existingTournament.setTitre(newTitle);
+                    break;
+                case 2:
+                    LocalDate newStartDate = ValidationUtils.readValidDate("Enter new start date (YYYY-MM-DD): ");
+                    existingTournament.setDateDebut(newStartDate);
+                    break;
+                case 3:
+                    LocalDate newEndDate = ValidationUtils.readValidDate("Enter new end date (YYYY-MM-DD): ");
+                    existingTournament.setDateFin(newEndDate);
+                    break;
+                case 4:
+                    Tournament.Statut newStatus = ValidationUtils.readValidTournamentStatus();
+                    existingTournament.setStatut(newStatus);
+                    break;
+                case 5:
+                    System.out.print("Enter estimated duration of the tournament (in hours): ");
+                    double newDureeEstimee = ValidationUtils.readValidDuration();
+                    existingTournament.setDureeEstimee(newDureeEstimee);
+                    break;
+                case 6:
+                    System.out.print("Enter break time between matches (in minutes): ");
+                    double newTempsPauseEntreMatchs = ValidationUtils.readValidDuration();
+                    existingTournament.setTempsPauseEntreMatchs(newTempsPauseEntreMatchs);
+                    break;
+                case 7:
+                    System.out.print("Enter number of spectators: ");
+                    int newNbSpec = ValidationUtils.readInt();
+                    existingTournament.setSpectators(newNbSpec);
+                    break;
+                case 8:
+                    System.out.print("Enter ceremony time (in minutes): ");
+                    double newTempsCeremonie = scanner.nextDouble();
+                    scanner.nextLine();
+                    existingTournament.setTempsCeremonie(newTempsCeremonie);
+                    break;
+                case 9:
+                    tournamentService.updateTournament(existingTournament);
+                    System.out.println("===============================");
+                    System.out.println("| Tournament updated successfully |");
+                    System.out.println("===============================");
+                    return; // Exit the update loop
+                default:
+                    System.out.println("Invalid choice, please try again.");
+            }
+        }
     }
+
 
     private static void viewTournamentById(Scanner scanner) {
         System.out.println("\n╔═════════════════════════════════╗");
         System.out.println("║       VIEW TOURNAMENT BY ID     ║");
         System.out.println("╚═════════════════════════════════╝");
+
         System.out.print("Enter the tournament ID: ");
         int id = ValidationUtils.readInt(); // Use validation method
 
         Tournament tournament = tournamentService.getTournament(id);
         if (tournament != null) {
-            System.out.println("Tournament ID => " + tournament.getId());
-            System.out.println("Title => " + tournament.getTitre());
-            System.out.println("Game => " + tournament.getGame().getNom());
-            System.out.println("Start Date => " + tournament.getDateDebut());
-            System.out.println("End Date => " + tournament.getDateFin());
-            System.out.println("Status => " + tournament.getStatut());
+            System.out.println("╔══════════════════════════════════════════╗");
+            System.out.printf("║ Tournament ID      : %d%n", tournament.getId());
+            System.out.printf("║ Title             : %s%n", tournament.getTitre());
+            System.out.printf("║ Game              : %s%n", tournament.getGame().getNom());
+            System.out.printf("║ Start Date        : %s%n", tournament.getDateDebut());
+            System.out.printf("║ End Date          : %s%n", tournament.getDateFin());
+            System.out.printf("║ Status            : %s%n", tournament.getStatut());
+            System.out.printf("║ Estimated Duration : %.2f hours%n", tournament.getDureeEstimee());
+            System.out.printf("║ Ceremony Time     : %.2f minutes%n", tournament.getTempsCeremonie());
+            System.out.printf("║ Break Time        : %.2f minutes%n", tournament.getTempsPauseEntreMatchs());
+            System.out.printf("║ Spectators        : %d%n", tournament.getSpectators());
+            System.out.println("╚══════════════════════════════════════════╝");
         } else {
             System.out.println("*****************************");
             System.out.println("Tournament with ID " + id + " not found :(");
@@ -207,26 +284,34 @@ public class TournamentUI {
     }
 
     private static void viewAllTournaments() {
-
         System.out.println("\n╔═════════════════════════════════╗");
-        System.out.println("║       VIEW ALL TOURNAMENT       ║");
+        System.out.println("║       VIEW ALL TOURNAMENTS      ║");
         System.out.println("╚═════════════════════════════════╝");
+
         List<Tournament> tournaments = tournamentService.getAllTournaments();
         if (tournaments.isEmpty()) {
             System.out.println("*****************");
             System.out.println("No tournaments found :(");
             System.out.println("*****************");
         } else {
+            System.out.println("╔══════════════════════════════════════════════════════════════════════╗");
             for (Tournament tournament : tournaments) {
-                System.out.println("Tournament ID => " + tournament.getId() +
-                        ", Title => " + tournament.getTitre() +
-                        ", Game => " + tournament.getGame().getNom() +
-                        ", Start Date => " + tournament.getDateDebut() +
-                        ", End Date => " + tournament.getDateFin() +
-                        ", Status => " + tournament.getStatut());
+                System.out.printf("║ Tournament ID      : %d%n", tournament.getId());
+                System.out.printf("║ Title             : %s%n", tournament.getTitre());
+                System.out.printf("║ Game              : %s%n", tournament.getGame().getNom());
+                System.out.printf("║ Start Date        : %s%n", tournament.getDateDebut());
+                System.out.printf("║ End Date          : %s%n", tournament.getDateFin());
+                System.out.printf("║ Status            : %s%n", tournament.getStatut());
+                System.out.printf("║ Estimated Duration : %.2f hours%n", tournament.getDureeEstimee());
+                System.out.printf("║ Ceremony Time     : %.2f minutes%n", tournament.getTempsCeremonie());
+                System.out.printf("║ Break Time        : %.2f minutes%n", tournament.getTempsPauseEntreMatchs());
+                System.out.printf("║ Spectators        : %d%n", tournament.getSpectators());
+                System.out.println("╠══════════════════════════════════════════════════════════════════════╣");
             }
+            System.out.println("╚══════════════════════════════════════════════════════════════════════╝");
         }
     }
+
 
     private static void deleteTournament(Scanner scanner) {
         System.out.println("/n╔═════════════════════════════════╗");

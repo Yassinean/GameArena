@@ -1,6 +1,7 @@
 package org.yassine.dao.impl;
 
 import org.yassine.dao.Interface.IPlayerDao;
+import org.yassine.model.Game;
 import org.yassine.model.Player;
 
 import javax.persistence.EntityManager;

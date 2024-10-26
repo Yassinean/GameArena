@@ -46,6 +46,9 @@ public class Tournament implements Serializable {
     @Column(name = "temps_ceremonie")
     private Double tempsCeremonie;
 
+    @Column(name = "spectators")
+    private int spectators;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Statut statut;
@@ -112,4 +115,15 @@ public class Tournament implements Serializable {
         this.statut = statut;
     }
 
+    public void setTempsCeremonie(Double tempsCeremonie) {
+        this.tempsCeremonie = tempsCeremonie;
+    }
+
+    public int getSpectators() {
+        return spectators;
+    }
+
+    public void setSpectators(int spectators) {
+        this.spectators = spectators;
+    }
 }
