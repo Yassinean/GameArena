@@ -39,4 +39,9 @@ public class TeamServiceImp implements ITeamService {
     public List<Team> getAllTeams() {
         return teamDao.getAllTeams();
     }
+
+    @Override
+    public Team getTeamByName(String name) {
+        return teamDao.getTeamByName(name);
+    }
 }

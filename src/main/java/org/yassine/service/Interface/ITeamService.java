@@ -10,4 +10,5 @@ public interface ITeamService {
     boolean deleteTeam(int id);
     Team getTeam(int id);
     List<Team> getAllTeams();
+    Team getTeamByName(String name);
 }

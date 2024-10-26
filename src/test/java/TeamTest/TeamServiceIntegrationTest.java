@@ -1,5 +1,6 @@
 package TeamTest;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -22,18 +23,18 @@ public class TeamServiceIntegrationTest {
         teamService = (ITeamService) context.getBean("teamService");
     }
 
-//    @Test
-//    @Transactional
-//    public void testCreateAndFindTournament() {
-//        Team team = new Team();
-//        team.setNom("Team_1");
-//        team.setClassement(2);
-//
-//        teamService.createTeam(team);
-//        fetchedTeam = teamService.getTeamByName("Team_1");
-//        assert fetchedTeam != null;
-//        assert fetchedTeam.getClassement() == 2;
-//    }
+    @Test
+    @Transactional
+    public void testCreateAndFindTournament() {
+        Team team = new Team();
+        team.setNom("Team_1");
+        team.setClassement(2);
+
+        teamService.createTeam(team);
+        fetchedTeam = teamService.getTeamByName("Team_1");
+        assert fetchedTeam != null;
+        assert fetchedTeam.getClassement() == 2;
+    }
 
 
     @AfterEach

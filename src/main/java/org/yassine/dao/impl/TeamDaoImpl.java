@@ -5,6 +5,7 @@ import org.yassine.model.Team;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class TeamDaoImpl implements ITeamDao {
@@ -87,6 +88,21 @@ public class TeamDaoImpl implements ITeamDao {
             return entityManager.createQuery("FROM Team", Team.class).getResultList();
         } finally {
             entityManager.close();
+        }
+    }
+
+    @Override
+    public Team getTeamByName(String name) {
+        EntityManager em = getEntityManager();
+        try {
+
+            TypedQuery<Team> query = em.createQuery("SELECT t FROM Team t WHERE t.nom = :name", Team.class);
+            query.setParameter("name", name);
+            return query.getResultStream().findFirst().orElse(null);
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            em.close();
         }
     }
 }
